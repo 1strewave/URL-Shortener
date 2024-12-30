@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>URL Shortener</h1>
+        <div class="form-container">
+            <input type="url" id="originalURL" placeholder="Your long URL" required>
+            <button onclick="shortenURL()">Shorten URL</button>
+        </div>
+        <div id="result" class="result-container"></div>
+    </div>
+
+    <script>
+        function shortenURL() {
+            const originalURL = document.getElementById('originalURL').value;
+            if (!originalURL) {
+                alert('Please, enter URL');
+                return;
+            }
+
+            fetch('/shorten', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'url=' + encodeURIComponent(originalURL)
+            })
+                .then(response => response.text())
+                .then(shortURL => {
+                    const fullURL = window.location.origin + '/' + shortURL;
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = `
+                <p>Your short URL:</p>
+                <a href="${fullURL}" target="_blank">${fullURL}</a>
+            `;
+                })
+                .catch(error => {
+                    alert('Error occured: ' + error);
+                });
+        }
+    </script>
+</body>
+
+</html>
